@@ -1,0 +1,44 @@
+# Maintainer: cpasjuste <cpasjuste@gmail.com>
+
+pkgname=dc-zlib
+pkgver=1.2.13
+pkgrel=1
+pkgdesc='Deflate compression method library'
+arch=('any')
+url='http://www.zlib.net/'
+license=('zlib')
+options=(!strip libtool staticlibs)
+source=("https://zlib.net/zlib-$pkgver.tar.gz")
+sha256sums=('b3a24de97a8fdbc835b9833169501030b8977031bcb54b3b3ac13740f846ab30')
+makedepends=('dc-pkg-config')
+groups=('dc-portlibs')
+
+build() {
+  cd zlib-$pkgver
+  
+  source /opt/pacbrew/dc/dc-env
+  
+  # zlib
+  ./configure --prefix="${DC_PREFIX}" --static
+  make $MAKEFLAGS libz.a # only build library, no programs
+
+  # libminizip
+  cd contrib/minizip
+  autoreconf --force --verbose --install
+  
+  #CFLAGS="${CFLAGS} -DUSE_FILE32API" /opt/pacbrew/dc/dc-configure
+  CFLAGS="${CFLAGS} -DUSE_FILE32API" \
+    ./configure --prefix="${DC_PREFIX}" --host=sh-elf \
+      --disable-shared --enable-static
+  make $MAKEFLAGS
+}
+
+package() {
+  cd zlib-$pkgver
+  # zlib
+  make DESTDIR="$pkgdir" install
+  # libminizip
+  cd contrib/minizip
+  make DESTDIR="$pkgdir" install
+}
+
