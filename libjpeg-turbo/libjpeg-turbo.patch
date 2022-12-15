@@ -1,0 +1,26 @@
+diff --unified --recursive --text libjpeg-turbo-2.1.4.ori/md5/md5.h libjpeg-turbo-2.1.4.new/md5/md5.h
+--- libjpeg-turbo-2.1.4.ori/md5/md5.h	2022-08-08 23:03:55.000000000 +0200
++++ libjpeg-turbo-2.1.4.new/md5/md5.h	2022-12-15 10:09:01.594416762 +0100
+@@ -38,7 +38,9 @@
+ /*  On machines where "long" is 64 bits, we need to declare
+     uint32 as something guaranteed to be 32 bits.  */
+ 
++#ifndef __DREAMCAST__
+ typedef unsigned int uint32;
++#endif
+ 
+ typedef struct MD5Context {
+   uint32 buf[4];
+diff --unified --recursive --text libjpeg-turbo-2.1.4.ori/tjunittest.c libjpeg-turbo-2.1.4.new/tjunittest.c
+--- libjpeg-turbo-2.1.4.ori/tjunittest.c	2022-08-08 23:03:55.000000000 +0200
++++ libjpeg-turbo-2.1.4.new/tjunittest.c	2022-12-15 10:08:53.902352434 +0100
+@@ -841,7 +841,9 @@
+            pixFormatStr[pixelFormat]);
+     retval = -1;
+   }
++#ifndef __DREAMCAST__
+   unlink(filename);
++#endif
+ 
+ bailout:
+   tjFree(buf);

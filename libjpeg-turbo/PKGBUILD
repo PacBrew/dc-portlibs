@@ -1,0 +1,47 @@
+# Maintainer:  cpasjuste <cpasjuste@gmail.com>
+
+pkgname=dc-libjpeg-turbo
+pkgver=2.1.4
+pkgrel=1
+pkgdesc='libjpeg derivative with accelerated baseline JPEG compression and decompression'
+arch=('any')
+url='https://github.com/libjpeg-turbo'
+license=('IJG')
+options=(!strip libtool staticlibs)
+source=("https://github.com/libjpeg-turbo/libjpeg-turbo/archive/refs/tags/$pkgver.tar.gz" "libjpeg-turbo.patch")
+sha256sums=('a78b05c0d8427a90eb5b4eb08af25309770c8379592bb0b8a863373128e6143f' 'SKIP')
+makedepends=('dc-environment')
+groups=('dc-portlibs')
+
+prepare() {
+  cd libjpeg-turbo-$pkgver
+  patch --forward --strip=1 --input="${srcdir}/libjpeg-turbo.patch"
+}
+
+build() {
+
+  cd libjpeg-turbo-$pkgver
+
+  source /opt/pacbrew/dc/dc-env
+  
+  mkdir -p build && cd build
+
+  dc-cmake -G "Unix Makefiles" \
+    -DCMAKE_INSTALL_PREFIX=${DC_PREFIX} \
+    -DENABLE_SHARED=OFF \
+    ..
+
+  make $MAKEFLAGS
+}
+
+package() {
+  cd libjpeg-turbo-$pkgver/build
+  
+  source /opt/pacbrew/dc/dc-env
+  
+  make DESTDIR="$pkgdir" install
+  
+  # remove useless stuff
+  rm -r "$pkgdir"${DC_PREFIX_BIN}
+  rm -r "$pkgdir"${DC_PREFIX_SHARE}
+}
