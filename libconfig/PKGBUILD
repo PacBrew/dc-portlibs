@@ -1,0 +1,36 @@
+# Maintainer:  cpasjuste <cpasjuste@gmail.com>
+
+pkgname=dc-libconfig
+pkgver=1.7.3
+pkgrel=1
+pkgdesc='C/C++ Configuration File Library'
+arch=('any')
+url="https://www.hyperrealm.com/libconfig/libconfig.html"
+license=('LGPL')
+options=(!strip libtool staticlibs)
+source=("https://github.com/hyperrealm/libconfig/releases/download/v$pkgver/libconfig-$pkgver.tar.gz")
+sha256sums=('545166d6cac037744381d1e9cc5a5405094e7bfad16a411699bcff40bbb31ee7')
+makedepends=('dc-pkg-config')
+groups=('dc-portlibs')
+
+build() {
+  cd libconfig-$pkgver
+
+  source /opt/pacbrew/dc/dc-env
+
+  ./configure --prefix="${DC_PREFIX}" --host=sh-elf \
+    --disable-shared --enable-static \
+    --disable-cxx --disable-examples --disable-tests
+
+  make
+}
+
+package() {
+  cd libconfig-$pkgver
+
+  make DESTDIR="$pkgdir" install
+  
+  # remove useless stuff
+  source /opt/pacbrew/dc/dc-env
+  rm -r "$pkgdir"${DC_PREFIX_SHARE}
+}

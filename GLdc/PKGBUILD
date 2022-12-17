@@ -1,0 +1,48 @@
+# Maintainer:  cpasjuste <cpasjuste@gmail.com>
+
+_commit=8fff6ee1aa3ea9b0ed5c3d656e53856fc3fdc244
+
+pkgname=dc-GLdc
+pkgver=77e6
+pkgrel=1
+pkgdesc='This is a partial implementation of OpenGL 1.2 for the SEGA Dreamcast for use with the KallistiOS SDK.'
+arch=('any')
+url='https://gitlab.com/simulant/GLdc'
+license=('BSD 2')
+options=(!strip libtool staticlibs)
+source=("https://gitlab.com/simulant/GLdc/-/archive/$_commit/GLdc-$_commit.tar.gz")
+sha256sums=('6c78cfd9b700ca32e75f02b699e281c1d682c31661c872e493306f054949eefc')
+makedepends=('dc-environment')
+groups=('dc-portlibs')
+
+pkgver() {
+  cd GLdc-$_commit
+  git describe --abbrev=4 --dirty --always --tags
+}
+
+build() {
+  cd GLdc-$_commit
+
+  source /opt/pacbrew/dc/dc-env
+  
+  mkdir -p build && cd build
+
+  dc-cmake -G "Unix Makefiles" \
+    -DCMAKE_INSTALL_PREFIX=${DC_PREFIX} \
+    -DENABLE_SHARED=OFF \
+    ..
+
+  make $MAKEFLAGS
+}
+
+package() {
+  cd GLdc-$_commit
+  
+  source /opt/pacbrew/dc/dc-env
+  
+  install -d ${pkgdir}${DC_PREFIX_LIB}
+  install -Dm 644 build/libGLdc.a -t ${pkgdir}${DC_PREFIX_LIB}
+  
+  install -d ${pkgdir}${DC_PREFIX_INCLUDE}
+  cp -r include/GL ${pkgdir}${DC_PREFIX_INCLUDE}
+}

@@ -1,0 +1,42 @@
+# Maintainer: cpasjuste <cpasjuste@gmail.com>
+
+pkgname=dc-mbedtls
+pkgver=3.3.0
+pkgrel=1
+pkgdesc='An open source, portable, easy to use, readable and flexible SSL library'
+arch=('any')
+url='https://tls.mbed.org'
+license=('apache')
+options=(!strip libtool staticlibs)
+depends=(dc-zlib)
+makedepends=('dc-pkg-config')
+source=("https://github.com/Mbed-TLS/mbedtls/archive/refs/tags/v$pkgver.tar.gz" "mbedtls.patch")
+sha256sums=('113fa84bc3cf862d56e7be0a656806a5d02448215d1e22c98176b1c372345d33' 'SKIP')
+groups=('dc-portlibs')
+
+prepare() {
+  cd mbedtls-$pkgver
+  #patch --forward --strip=1 --input="${srcdir}/mbedtls.patch"
+}
+
+build() {
+  cd mbedtls-$pkgver
+
+  source /opt/pacbrew/dc/dc-env
+
+  mkdir build && cd build
+
+  export CFLAGS="${CFLAGS} -Wno-incompatible-pointer-types"
+  dc-cmake \
+    -DCMAKE_INSTALL_PREFIX=${DC_PREFIX} \
+    -DENABLE_TESTING=FALSE -DENABLE_PROGRAMS=FALSE -DGEN_FILES=FALSE \
+    ..
+
+  make $MAKEFLAGS
+
+}
+
+package() {
+  cd mbedtls-$pkgver/build
+  make install DESTDIR="$pkgdir"
+}

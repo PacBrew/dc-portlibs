@@ -1,0 +1,44 @@
+# Maintainer: cpasjuste <cpasjuste@gmail.com>
+
+pkgname=dc-freetype
+pkgver=2.12.1
+pkgrel=1
+pkgdesc='FreeType is a freely available software library to render fonts.'
+arch=('any')
+url='https://www.freetype.org/'
+license=(GPL2+ custom:FreeType)
+source=("http://download.savannah.gnu.org/releases/freetype/freetype-$pkgver.tar.gz")
+sha256sums=('efe71fd4b8246f1b0b1b9bfca13cfff1c9ad85930340c27df469733bbb620938')
+options=(!strip libtool staticlibs)
+depends=("dc-bzip2" "dc-libpng" "dc-zlib")
+makedepends=('dc-pkg-config')
+groups=('dc-portlibs')
+
+build() {
+  cd freetype-$pkgver
+
+  source /opt/pacbrew/dc/dc-env
+
+  ./configure --prefix="${DC_PREFIX}" --host=sh-elf \
+    --disable-shared --enable-static \
+    --with-zlib \
+    --with-bzip2 \
+    --with-png \
+    --enable-freetype-config
+
+  make
+}
+
+package() {
+  cd freetype-$pkgver
+
+  source /opt/pacbrew/dc/dc-env
+
+  make DESTDIR="$pkgdir" install
+
+  # patch the config script to always output static libraries when not relying on pkg-config
+  sed 's/\$show_static/yes/' -i "${pkgdir}/${DC_PREFIX_BIN}/freetype-config"
+
+  # remove useless stuff
+  rm -r "${pkgdir}/${DC_PREFIX_SHARE}"
+}
