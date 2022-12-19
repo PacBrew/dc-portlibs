@@ -3,7 +3,7 @@
 _commit=8fff6ee1aa3ea9b0ed5c3d656e53856fc3fdc244
 
 pkgname=dc-GLdc
-pkgver=77e6
+pkgver=5d90
 pkgrel=1
 pkgdesc='This is a partial implementation of OpenGL 1.2 for the SEGA Dreamcast for use with the KallistiOS SDK.'
 arch=('any')
@@ -17,7 +17,7 @@ groups=('dc-portlibs')
 
 pkgver() {
   cd GLdc-$_commit
-  git describe --abbrev=4 --dirty --always --tags
+  git describe --abbrev=4 --always --tags
 }
 
 build() {
@@ -29,7 +29,7 @@ build() {
 
   dc-cmake -G "Unix Makefiles" \
     -DCMAKE_INSTALL_PREFIX=${DC_PREFIX} \
-    -DENABLE_SHARED=OFF \
+    -DCMAKE_BUILD_TYPE=Release \
     ..
 
   make $MAKEFLAGS
