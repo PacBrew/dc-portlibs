@@ -1,0 +1,48 @@
+From fac71579906020ab5a0b9fa489a5bd80989b8d38 Mon Sep 17 00:00:00 2001
+From: cpasjuste <cpasjuste@gmail.com>
+Date: Wed, 5 Feb 2020 17:01:59 +0100
+Subject: [PATCH] dc: fast fix
+
+---
+ lib/libconfig.c     | 4 ++--
+ tinytest/tinytest.c | 4 ++++
+ 2 files changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/lib/libconfig.c b/lib/libconfig.c
+index 37c56b1..cea3e00 100644
+--- a/lib/libconfig.c
++++ b/lib/libconfig.c
+@@ -691,7 +691,7 @@ int config_write_file(config_t *config, const char *filename)
+   }
+ 
+   config_write(config, stream);
+-
++#ifndef _arch_dreamcast
+   if(config_get_option(config, CONFIG_OPTION_FSYNC))
+   {
+     int fd = fileno(stream);
+@@ -707,7 +707,7 @@ int config_write_file(config_t *config, const char *filename)
+       }
+     }
+   }
+-
++#endif
+   fclose(stream);
+   config->error_type = CONFIG_ERR_NONE;
+   return(CONFIG_TRUE);
+diff --git a/tinytest/tinytest.c b/tinytest/tinytest.c
+index 499f1e9..898ce42 100644
+--- a/tinytest/tinytest.c
++++ b/tinytest/tinytest.c
+@@ -628,7 +628,11 @@ void tt_fail(const char *file, int line, const char *message, ...)
+ 
+ tt_bool_t tt_file_exists(const char *file)
+ {
++#ifdef _arch_dreamcast
++  return 0;
++#else
+   return(access(file, F_OK) == 0);
++#endif
+ }
+ 
+ #ifdef _MSC_VER
