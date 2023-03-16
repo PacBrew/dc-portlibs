@@ -1,9 +1,9 @@
 # Maintainer:  cpasjuste <cpasjuste@gmail.com>
 
-_commit=8fff6ee1aa3ea9b0ed5c3d656e53856fc3fdc244
+_commit=0cf006ebceede6107ba9b3adc88c2efeddb8a515
 
 pkgname=dc-GLdc
-pkgver=5d90
+pkgver=d694
 pkgrel=1
 pkgdesc='This is a partial implementation of OpenGL 1.2 for the SEGA Dreamcast for use with the KallistiOS SDK.'
 arch=('any')
@@ -11,7 +11,7 @@ url='https://gitlab.com/simulant/GLdc'
 license=('BSD 2')
 options=(!strip libtool staticlibs)
 source=("https://gitlab.com/simulant/GLdc/-/archive/$_commit/GLdc-$_commit.tar.gz")
-sha256sums=('6c78cfd9b700ca32e75f02b699e281c1d682c31661c872e493306f054949eefc')
+sha256sums=('19ac698b958318747e2aa43a4be706eedd5f7b147d8c8bfc72a34bae28b892de')
 makedepends=('dc-environment')
 groups=('dc-portlibs')
 
